@@ -28,16 +28,15 @@ class Clan {
     // 2. Mapeia CADA ITEM DA LISTA PARA UMA STRING USANDO .toString().
     //    Isso vai converter ints (123 -> "123") ou strings ("Naruto" -> "Naruto").
     // 3. Converte o resultado para uma List<String>.
-    final characters = (json['characters'] as List<dynamic>?)
-            ?.map((e) => e.toString()) // <<< MUDANÇA AQUI: CONVERTE PARA STRING DIRETAMENTE
+    final characters =
+        (json['characters'] as List<dynamic>?)
+            ?.map(
+              (e) => e.toString(),
+            ) // <<< MUDANÇA AQUI: CONVERTE PARA STRING DIRETAMENTE
             .toList() ??
         [];
 
-    return Clan(
-      id: id,
-      name: name,
-      characters: characters,
-    );
+    return Clan(id: id, name: name, characters: characters);
   }
 }
 
@@ -50,18 +49,23 @@ Future<List<Clan>> fetchClans() async {
 
   if (response.statusCode == 200) {
     // Primeiro, decodifica o corpo da resposta como um Map<String, dynamic>
-    final Map<String, dynamic> responseBody = jsonDecode(response.body) as Map<String, dynamic>;
+    final Map<String, dynamic> responseBody =
+        jsonDecode(response.body) as Map<String, dynamic>;
 
     // Agora, acessa a lista de clãs usando a chave "clans"
     // Esta linha causou o erro `int is not subtype of Map` antes,
     // se o item dentro de 'clans' não fosse um Map, mas sim um int.
-  
+
     final List<dynamic> jsonList = responseBody['clans'] as List<dynamic>;
 
     // Converte cada objeto JSON (que representa um clã) em uma instância de Clan.
-    return jsonList.map((json) => Clan.fromJson(json as Map<String, dynamic>)).toList();
+    return jsonList
+        .map((json) => Clan.fromJson(json as Map<String, dynamic>))
+        .toList();
   } else {
-    throw Exception('Falha ao carregar os clãs. Código de status: ${response.statusCode}');
+    throw Exception(
+      'Falha ao carregar os clãs. Código de status: ${response.statusCode}',
+    );
   }
 }
 
@@ -106,9 +110,14 @@ class _MyAppState extends State<MyApp> {
                   itemBuilder: (context, index) {
                     final clan = snapshot.data![index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -132,19 +141,34 @@ class _MyAppState extends State<MyApp> {
                               ),
                             ),
                             // Exibe a lista de personagens, que agora são Strings diretas
-                            ...clan.characters.map((charName) => Padding(
-                                  padding: const EdgeInsets.only(left: 8.0, top: 4.0),
-                                  child: Text(
-                                    '- $charName', // <<< ACESSANDO A STRING DIRETAMENTE
-                                    style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                            ...clan.characters.map(
+                              (charName) => Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8.0,
+                                  top: 4.0,
+                                ),
+                                child: Text(
+                                  '- $charName', // <<< ACESSANDO A STRING DIRETAMENTE
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[800],
                                   ),
-                                )),
+                                ),
+                              ),
+                            ),
                             if (clan.characters.isEmpty)
                               Padding(
-                                padding: const EdgeInsets.only(left: 8.0, top: 4.0),
+                                padding: const EdgeInsets.only(
+                                  left: 8.0,
+                                  top: 4.0,
+                                ),
                                 child: Text(
                                   'Nenhum personagem listado.',
-                                  style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.grey),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
                           ],
@@ -154,7 +178,10 @@ class _MyAppState extends State<MyApp> {
                   },
                 );
               } else if (snapshot.hasError) {
-                return Text('Erro: ${snapshot.error}', style: const TextStyle(color: Colors.red));
+                return Text(
+                  'Erro: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red),
+                );
               }
 
               return const CircularProgressIndicator();
